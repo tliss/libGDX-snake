@@ -11,6 +11,10 @@ public class GameScreen extends ScreenAdapter {
 
     private SpriteBatch batch;
     private Texture snakeHead;
+    private static final float MOVE_TIME = 1F;
+    private float timer = MOVE_TIME;
+    private static final int SNAKE_MOVEMENT = 32;
+    private int snakeX = 0, snakeY = 0;
 
     @Override
     public void show() {
@@ -20,10 +24,22 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void render(float delta){
+        timer -= delta;
+        if (timer <= 0){
+            timer = MOVE_TIME;
+            snakeX += SNAKE_MOVEMENT;
+        }
         Gdx.gl.glClearColor(Color.BLACK.r, Color.BLACK.g, Color.BLACK.b, Color.BLACK.a);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
-        batch.draw(snakeHead,0,0);
+        batch.draw(snakeHead,snakeX,snakeY);
+        checkForOutOfBounds();
         batch.end();
+    }
+
+    private void checkForOutOfBounds() {
+        if (snakeX >= Gdx.graphics.getWidth()){
+            snakeX = 0;
+        }
     }
 }
