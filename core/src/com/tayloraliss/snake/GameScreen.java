@@ -15,6 +15,11 @@ public class GameScreen extends ScreenAdapter {
     private float timer = MOVE_TIME;
     private static final int SNAKE_MOVEMENT = 32;
     private int snakeX = 0, snakeY = 0;
+    private static final int RIGHT = 0;
+    private static final int LEFT = 1;
+    private static final int UP = 2;
+    private static final int DOWN = 3;
+    private int snakeDirection = UP;
 
     @Override
     public void show() {
@@ -27,7 +32,7 @@ public class GameScreen extends ScreenAdapter {
         timer -= delta;
         if (timer <= 0){
             timer = MOVE_TIME;
-            snakeX += SNAKE_MOVEMENT;
+            moveSnake();
         }
         Gdx.gl.glClearColor(Color.BLACK.r, Color.BLACK.g, Color.BLACK.b, Color.BLACK.a);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -40,6 +45,27 @@ public class GameScreen extends ScreenAdapter {
     private void checkForOutOfBounds() {
         if (snakeX >= Gdx.graphics.getWidth()){
             snakeX = 0;
+        }
+    }
+
+    private void moveSnake(){
+        switch (snakeDirection){
+            case RIGHT: {
+                snakeX += SNAKE_MOVEMENT;
+                return;
+            }
+            case LEFT: {
+                snakeX -= SNAKE_MOVEMENT;
+                return;
+            }
+            case UP: {
+                snakeY += SNAKE_MOVEMENT;
+                return;
+            }
+            case DOWN: {
+                snakeY -= SNAKE_MOVEMENT;
+                return;
+            }
         }
     }
 }
