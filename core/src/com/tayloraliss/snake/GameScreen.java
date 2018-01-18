@@ -45,6 +45,7 @@ public class GameScreen extends ScreenAdapter {
             moveSnake();
             checkForOutOfBounds();
         }
+        checkAppleCollision();
         checkAndPlaceApple();
         clearScreen();
         draw();
@@ -120,6 +121,12 @@ public class GameScreen extends ScreenAdapter {
             batch.draw(apple, appleX, appleY);
         }
         batch.end();
+    }
+
+    private void checkAppleCollision() {
+        if (appleAvailable && appleX == snakeX && appleY == snakeY) {
+            appleAvailable = false;
+        }
     }
 
 }
