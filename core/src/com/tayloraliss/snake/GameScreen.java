@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 
@@ -34,8 +35,13 @@ public class GameScreen extends ScreenAdapter {
     private Array<BodyPart> bodyParts = new Array<BodyPart>();
     private int snakeXBeforeUpdate = 0, snakeYBeforeUpdate =0;
 
+    private ShapeRenderer shapeRenderer;
+    private static final int GRID_CELL = 32;
+
+    //show() is called when the screen becomes the current screen in the game
     @Override
     public void show() {
+        shapeRenderer = new ShapeRenderer();
         batch = new SpriteBatch();
         snakeHead = new Texture(Gdx.files.internal("snakehead.png"));
         apple = new Texture(Gdx.files.internal("apple.png"));
@@ -55,6 +61,7 @@ public class GameScreen extends ScreenAdapter {
         checkAppleCollision();
         checkAndPlaceApple();
         clearScreen();
+        drawGrid();
         draw();
     }
 
@@ -150,6 +157,17 @@ public class GameScreen extends ScreenAdapter {
             bodyParts.insert(0, bodyPart);
             appleAvailable = false;
         }
+    }
+
+    private void drawGrid(){
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        for (int x = 0; x < Gdx.graphics.getWidth(); x += GRID_CELL){
+            for (int y = 0; y < Gdx.graphics.getHeight(); y += GRID_CELL){
+                shapeRenderer.setColor(109f/255f, 255f/255f, 109f/255f, 1.0f);
+                shapeRenderer.rect(x, y, GRID_CELL, GRID_CELL);
+            }
+        }
+        shapeRenderer.end();
     }
 
     private class BodyPart {
