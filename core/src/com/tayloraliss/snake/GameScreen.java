@@ -38,6 +38,8 @@ public class GameScreen extends ScreenAdapter {
     private ShapeRenderer shapeRenderer;
     private static final int GRID_CELL = 32;
 
+    private boolean directionSet;
+
     //show() is called when the screen becomes the current screen in the game
     @Override
     public void show() {
@@ -168,6 +170,34 @@ public class GameScreen extends ScreenAdapter {
             }
         }
         shapeRenderer.end();
+    }
+
+    private void updateIfNotOppositeDirection(int newSnakeDirection, int oppositeDirection){
+        if (snakeDirection != oppositeDirection) snakeDirection = newSnakeDirection;
+    }
+
+    private void updateDirection(int newSnakeDirection){
+        if (!directionSet && snakeDirection != newSnakeDirection){
+            directionSet = true;
+            switch (newSnakeDirection) {
+                case LEFT: {
+                    updateIfNotOppositeDirection(newSnakeDirection, RIGHT);
+                }
+                break;
+                case RIGHT: {
+                    updateIfNotOppositeDirection(newSnakeDirection, LEFT);
+                }
+                break;
+                case UP: {
+                    updateIfNotOppositeDirection(newSnakeDirection, DOWN);
+                }
+                break;
+                case DOWN: {
+                    updateIfNotOppositeDirection(newSnakeDirection, UP);
+                }
+                break;
+            }
+        }
     }
 
     private class BodyPart {
