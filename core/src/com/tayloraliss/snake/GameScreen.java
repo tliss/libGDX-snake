@@ -17,7 +17,7 @@ public class GameScreen extends ScreenAdapter {
     private SpriteBatch batch;
 
     private Texture snakeHead;
-    private static final float MOVE_TIME = 1F;
+    private static final float MOVE_TIME = .25F;
     private float timer = MOVE_TIME;
     private static final int SNAKE_MOVEMENT = 32;
     private int snakeX = 0, snakeY = 0;
@@ -38,7 +38,7 @@ public class GameScreen extends ScreenAdapter {
     private ShapeRenderer shapeRenderer;
     private static final int GRID_CELL = 32;
 
-    private boolean directionSet;
+    private boolean directionSet = false;
 
     //show() is called when the screen becomes the current screen in the game
     @Override
@@ -57,6 +57,7 @@ public class GameScreen extends ScreenAdapter {
         if (timer <= 0){
             timer = MOVE_TIME;
             moveSnake();
+            directionSet = false;
             checkForOutOfBounds();
             updateBodyPartsPosition();
         }
@@ -119,10 +120,10 @@ public class GameScreen extends ScreenAdapter {
         boolean wPressed = Gdx.input.isKeyPressed(Input.Keys.W);
         boolean sPressed = Gdx.input.isKeyPressed(Input.Keys.S);
 
-        if (aPressed) snakeDirection = LEFT;
-        if (dPressed) snakeDirection = RIGHT;
-        if (wPressed) snakeDirection = UP;
-        if (sPressed) snakeDirection = DOWN;
+        if (aPressed) updateDirection(LEFT);
+        if (dPressed) updateDirection(RIGHT);
+        if (wPressed) updateDirection(UP);
+        if (sPressed) updateDirection(DOWN);
     }
 
     private void checkAndPlaceApple() {
@@ -173,7 +174,9 @@ public class GameScreen extends ScreenAdapter {
     }
 
     private void updateIfNotOppositeDirection(int newSnakeDirection, int oppositeDirection){
-        if (snakeDirection != oppositeDirection) snakeDirection = newSnakeDirection;
+        if (snakeDirection != oppositeDirection || bodyParts.size == 0) {
+            snakeDirection = newSnakeDirection;
+        }
     }
 
     private void updateDirection(int newSnakeDirection){
