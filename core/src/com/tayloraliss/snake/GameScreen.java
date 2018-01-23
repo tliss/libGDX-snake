@@ -39,6 +39,7 @@ public class GameScreen extends ScreenAdapter {
     private static final int GRID_CELL = 32;
 
     private boolean directionSet = false;
+    private boolean hasHit = false;
 
     //show() is called when the screen becomes the current screen in the game
     @Override
@@ -199,6 +200,14 @@ public class GameScreen extends ScreenAdapter {
                     updateIfNotOppositeDirection(newSnakeDirection, UP);
                 }
                 break;
+            }
+        }
+    }
+
+    private void checkSnakeBodyCollision() {
+        for (BodyPart bodyPart : bodyParts) {
+            if (bodyPart.x == snakeX && bodyPart.y == snakeY) {
+                hasHit = true;
             }
         }
     }
