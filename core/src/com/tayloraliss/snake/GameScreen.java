@@ -39,7 +39,7 @@ public class GameScreen extends ScreenAdapter {
     private static final int GRID_CELL = 32;
 
     private boolean directionSet = false;
-    private boolean hasHit = false;
+    private STATE state = GameScreen.STATE.PLAYING;
 
     //show() is called when the screen becomes the current screen in the game
     @Override
@@ -53,23 +53,22 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void render(float delta){
-        if(!hasHit) {
-            queryInput();
-            timer -= delta;
-            if (timer <= 0) {
-                timer = MOVE_TIME;
-                moveSnake();
-                checkForOutOfBounds();
-                updateBodyPartsPosition();
-                checkSnakeBodyCollision();
-                directionSet = false;
-            }
-        }
-        checkAppleCollision();
-        checkAndPlaceApple();
-        clearScreen();
-        drawGrid();
-        draw();
+       switch(state){
+           case PLAYING: {
+                queryInput();
+                updateSnake(delta);
+                checkAppleCollision();
+                checkAndPlaceApple();
+           }
+           break;
+           case GAME_OVER: {
+
+           }
+           break;
+       }
+       clearScreen();
+       drawGrid();
+       draw();
     }
 
     private void checkForOutOfBounds() {
@@ -210,9 +209,26 @@ public class GameScreen extends ScreenAdapter {
     private void checkSnakeBodyCollision() {
         for (BodyPart bodyPart : bodyParts) {
             if (bodyPart.x == snakeX && bodyPart.y == snakeY) {
-                hasHit = true;
+                state = STATE.GAME_OVER;
             }
         }
+    }
+
+    private void updateSnake(float delta){
+        queryInput();
+        timer -= delta;
+        if (timer <= 0) {
+            timer = MOVE_TIME;
+            moveSnake();
+            checkForOutOfBounds();
+            updateBodyPartsPosition();
+            checkSnakeBodyCollision();
+            directionSet = false;
+        }
+    }
+
+    private enum STATE {
+        PLAYING, GAME_OVER
     }
 
     private class BodyPart {
