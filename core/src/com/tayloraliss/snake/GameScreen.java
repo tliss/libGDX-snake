@@ -7,10 +7,13 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class GameScreen extends ScreenAdapter {
 
@@ -41,14 +44,23 @@ public class GameScreen extends ScreenAdapter {
     private boolean directionSet = false;
     private STATE state = GameScreen.STATE.PLAYING;
 
+    private BitmapFont bitmapFont;
+    private GlyphLayout layout = new GlyphLayout();
+    private String text = "This Snake Game is Awesome!";
+    private static final String GAME_OVER_TEXT = "Game Over!";
+
+    private Viewport viewport;
+
     //show() is called when the screen becomes the current screen in the game
     @Override
     public void show() {
+        bitmapFont = new BitmapFont();
         shapeRenderer = new ShapeRenderer();
         batch = new SpriteBatch();
         snakeHead = new Texture(Gdx.files.internal("snakehead.png"));
         apple = new Texture(Gdx.files.internal("apple.png"));
         snakeBody = new Texture(Gdx.files.internal("snakeBody.png"));
+        layout = new GlyphLayout();
     }
 
     @Override
@@ -152,6 +164,11 @@ public class GameScreen extends ScreenAdapter {
         }
         if (appleAvailable) {
             batch.draw(apple, appleX, appleY);
+        }
+        if (state == STATE.GAME_OVER){
+            layout.setText(bitmapFont, GAME_OVER_TEXT);
+            bitmapFont.draw(batch, GAME_OVER_TEXT, (Gdx.graphics.getWidth() -
+                    layout.width) / 2, (Gdx.graphics.getHeight() - layout.height) / 2);
         }
         batch.end();
     }
