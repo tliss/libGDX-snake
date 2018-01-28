@@ -53,14 +53,17 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void render(float delta){
-        queryInput();
-        timer -= delta;
-        if (timer <= 0){
-            timer = MOVE_TIME;
-            moveSnake();
-            directionSet = false;
-            checkForOutOfBounds();
-            updateBodyPartsPosition();
+        if(!hasHit) {
+            queryInput();
+            timer -= delta;
+            if (timer <= 0) {
+                timer = MOVE_TIME;
+                moveSnake();
+                checkForOutOfBounds();
+                updateBodyPartsPosition();
+                checkSnakeBodyCollision();
+                directionSet = false;
+            }
         }
         checkAppleCollision();
         checkAndPlaceApple();
