@@ -46,8 +46,7 @@ public class GameScreen extends ScreenAdapter {
 
     private BitmapFont bitmapFont;
     private GlyphLayout layout = new GlyphLayout();
-    private String text = "This Snake Game is Awesome!";
-    private static final String GAME_OVER_TEXT = "Game Over!";
+    private static final String GAME_OVER_TEXT = "Game Over! Press space to restart!";
 
     private Viewport viewport;
 
@@ -74,12 +73,12 @@ public class GameScreen extends ScreenAdapter {
            }
            break;
            case GAME_OVER: {
-
+                checkForRestart();
            }
            break;
        }
        clearScreen();
-       drawGrid();
+//       drawGrid();
        draw();
     }
 
@@ -246,6 +245,23 @@ public class GameScreen extends ScreenAdapter {
 
     private enum STATE {
         PLAYING, GAME_OVER
+    }
+
+    private void checkForRestart() {
+        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) doRestart();
+    }
+
+    private void doRestart() {
+        state = STATE.PLAYING;
+        bodyParts.clear();
+        snakeDirection = RIGHT;
+        directionSet = false;
+        timer = MOVE_TIME;
+        snakeX = 0;
+        snakeY = 0;
+        snakeXBeforeUpdate = 0;
+        snakeYBeforeUpdate = 0;
+        appleAvailable = false;
     }
 
     private class BodyPart {
