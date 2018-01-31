@@ -57,8 +57,8 @@ public class GameScreen extends ScreenAdapter {
     private int score = 0;
     private static final int POINTS_PER_APPLE = 10;
 
-    private static final float WORLD_WIDTH = 640;
-    private static final float WORLD_HEIGHT = 480;
+    private static final float WORLD_WIDTH = 224;
+    private static final float WORLD_HEIGHT = 320;
 
     private Viewport viewport;
     private Camera camera;
@@ -96,7 +96,7 @@ public class GameScreen extends ScreenAdapter {
            break;
        }
        clearScreen();
-//       drawGrid();
+       drawGrid();
        draw();
     }
 
