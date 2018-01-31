@@ -62,6 +62,7 @@ public class GameScreen extends ScreenAdapter {
 
     private Viewport viewport;
     private Camera camera;
+//    private OrthographicCamera camera;
 
     //show() is called when the screen becomes the current screen in the game
     @Override
@@ -75,7 +76,7 @@ public class GameScreen extends ScreenAdapter {
         batch = new SpriteBatch();
         snakeHead = new Texture(Gdx.files.internal("snakehead.png"));
         apple = new Texture(Gdx.files.internal("apple.png"));
-        snakeBody = new Texture(Gdx.files.internal("snakeBody.png"));
+        snakeBody = new Texture(Gdx.files.internal("snakebody.png"));
         layout = new GlyphLayout();
         scoreBounds = new GlyphLayout();
     }
@@ -164,8 +165,17 @@ public class GameScreen extends ScreenAdapter {
                 appleX = MathUtils.random((int)(viewport.getWorldWidth() / SNAKE_MOVEMENT) - 1) * SNAKE_MOVEMENT;
                 appleY = MathUtils.random((int)(viewport.getWorldHeight() / SNAKE_MOVEMENT) -1) * SNAKE_MOVEMENT;
                 appleAvailable = true;
-            } while (appleX == snakeX && appleY == snakeY);
+            } while ((appleX == snakeX && appleY == snakeY) || coordinatesMatchBodyPart(appleX, appleY));
         }
+    }
+
+    private boolean coordinatesMatchBodyPart(int x, int y){
+        for (BodyPart bodyPart : bodyParts){
+            if (x == bodyPart.x && y == bodyPart.y) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void clearScreen() {
@@ -193,6 +203,7 @@ public class GameScreen extends ScreenAdapter {
         batch.end();
     }
 
+    //Grow the body and increase score when head hits apple
     private void checkAppleCollision() {
         if (appleAvailable && appleX == snakeX && appleY == snakeY) {
             BodyPart bodyPart = new BodyPart (snakeBody);
