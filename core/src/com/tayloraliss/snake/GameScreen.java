@@ -46,9 +46,11 @@ public class GameScreen extends ScreenAdapter {
 
     private BitmapFont bitmapFont;
     private GlyphLayout layout = new GlyphLayout();
+    private GlyphLayout scoreBounds = new GlyphLayout();
     private static final String GAME_OVER_TEXT = "Game Over! Press space to restart!";
 
-    private Viewport viewport;
+    private int score = 0;
+    private static final int POINTS_PER_APPLE = 10;
 
     //show() is called when the screen becomes the current screen in the game
     @Override
@@ -60,6 +62,7 @@ public class GameScreen extends ScreenAdapter {
         apple = new Texture(Gdx.files.internal("apple.png"));
         snakeBody = new Texture(Gdx.files.internal("snakeBody.png"));
         layout = new GlyphLayout();
+        scoreBounds = new GlyphLayout();
     }
 
     @Override
@@ -169,6 +172,7 @@ public class GameScreen extends ScreenAdapter {
             bitmapFont.draw(batch, GAME_OVER_TEXT, (Gdx.graphics.getWidth() -
                     layout.width) / 2, (Gdx.graphics.getHeight() - layout.height) / 2);
         }
+        drawScore();
         batch.end();
     }
 
@@ -177,6 +181,7 @@ public class GameScreen extends ScreenAdapter {
             BodyPart bodyPart = new BodyPart (snakeBody);
             bodyPart.updateBodyPosition(snakeX, snakeY);
             bodyParts.insert(0, bodyPart);
+            addToScore();
             appleAvailable = false;
         }
     }
@@ -262,6 +267,20 @@ public class GameScreen extends ScreenAdapter {
         snakeXBeforeUpdate = 0;
         snakeYBeforeUpdate = 0;
         appleAvailable = false;
+        score = 0;
+    }
+
+    private void addToScore() {
+        score += POINTS_PER_APPLE;
+    }
+
+    private void drawScore() {
+        if (state == STATE.PLAYING) {
+            String scoreAsString = Integer.toString(score);
+            scoreBounds.setText(bitmapFont, scoreAsString);
+            bitmapFont.draw(batch, scoreAsString, (Gdx.graphics.getWidth() - scoreBounds.width) / 2,
+                    (4 * Gdx.graphics.getHeight() / 5) - scoreBounds.height / 2);
+        }
     }
 
     private class BodyPart {
