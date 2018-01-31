@@ -7,8 +7,8 @@ import com.tayloraliss.snake.SnakeGame;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		config.width = 224;
-		config.height = 320;
+		config.width = 352;
+		config.height = 608;
 		new LwjglApplication(new SnakeGame(), config);
 	}
 }

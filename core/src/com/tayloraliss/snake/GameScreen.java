@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
@@ -57,20 +58,23 @@ public class GameScreen extends ScreenAdapter {
     private int score = 0;
     private static final int POINTS_PER_APPLE = 10;
 
-    private static final float WORLD_WIDTH = 224;
+    private static final float WORLD_WIDTH = 192;
     private static final float WORLD_HEIGHT = 320;
+
+    private static final float VIEWPORT_WIDTH = 224;
+    private static final float VIEWPORT_HEIGHT = 352;
 
     private Viewport viewport;
     private Camera camera;
-//    private OrthographicCamera camera;
+
+    Sprite sprite;
 
     //show() is called when the screen becomes the current screen in the game
     @Override
     public void show() {
-        camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        camera.position.set(WORLD_WIDTH / 2, WORLD_HEIGHT / 2, 0);
-        camera.update();
+        camera = new OrthographicCamera(VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
         viewport = new FitViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
+
         bitmapFont = new BitmapFont();
         shapeRenderer = new ShapeRenderer();
         batch = new SpriteBatch();
@@ -79,6 +83,12 @@ public class GameScreen extends ScreenAdapter {
         snakeBody = new Texture(Gdx.files.internal("snakebody.png"));
         layout = new GlyphLayout();
         scoreBounds = new GlyphLayout();
+
+        sprite = new Sprite(new Texture(Gdx.files.internal("dirt.jpg")));
+        sprite.setScale(.15f);
+        sprite.setCenter(WORLD_WIDTH / 2,WORLD_HEIGHT / 2);
+        camera.position.set(WORLD_WIDTH / 2, WORLD_HEIGHT / 2, 0);
+        camera.update();
     }
 
     @Override
@@ -97,7 +107,6 @@ public class GameScreen extends ScreenAdapter {
            break;
        }
        clearScreen();
-       drawGrid();
        draw();
     }
 
@@ -179,7 +188,7 @@ public class GameScreen extends ScreenAdapter {
     }
 
     private void clearScreen() {
-        Gdx.gl.glClearColor(Color.BLACK.r, Color.BLACK.g, Color.BLACK.b, Color.BLACK.a);
+        Gdx.gl.glClearColor(Color.RED.r, Color.RED.g, Color.RED.b, Color.RED.a);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
     }
 
@@ -187,6 +196,7 @@ public class GameScreen extends ScreenAdapter {
         batch.setProjectionMatrix(camera.projection);
         batch.setTransformMatrix(camera.view);
         batch.begin();
+        sprite.draw(batch);
         batch.draw(snakeHead, snakeX, snakeY);
         for (BodyPart bodyPart : bodyParts) {
             bodyPart.draw(batch);
@@ -201,6 +211,7 @@ public class GameScreen extends ScreenAdapter {
         }
         drawScore();
         batch.end();
+        drawGrid();
     }
 
     //Grow the body and increase score when head hits apple
@@ -212,6 +223,17 @@ public class GameScreen extends ScreenAdapter {
             addToScore();
             appleAvailable = false;
         }
+    }
+
+    private void addToScore() {
+        score += POINTS_PER_APPLE;
+    }
+
+    private void drawScore() {
+        String scoreAsString = Integer.toString(score);
+        scoreBounds.setText(bitmapFont, scoreAsString);
+        bitmapFont.draw(batch, scoreAsString, (viewport.getWorldWidth() - scoreBounds.width) / 2,
+                (viewport.getWorldHeight() + scoreBounds.height + 3));
     }
 
     private void drawGrid(){
@@ -283,7 +305,9 @@ public class GameScreen extends ScreenAdapter {
     }
 
     private void checkForRestart() {
-        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) doRestart();
+        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+            doRestart();
+        }
     }
 
     private void doRestart() {
@@ -300,17 +324,9 @@ public class GameScreen extends ScreenAdapter {
         score = 0;
     }
 
-    private void addToScore() {
-        score += POINTS_PER_APPLE;
-    }
-
-    private void drawScore() {
-        if (state == STATE.PLAYING) {
-            String scoreAsString = Integer.toString(score);
-            scoreBounds.setText(bitmapFont, scoreAsString);
-            bitmapFont.draw(batch, scoreAsString, (viewport.getWorldWidth() - scoreBounds.width) / 2,
-                    (4 * viewport.getWorldHeight() / 5) - scoreBounds.height / 2);
-        }
+    @Override
+    public void dispose(){
+        sprite.getTexture().dispose();
     }
 
     private class BodyPart {
